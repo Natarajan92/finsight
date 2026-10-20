@@ -151,6 +151,10 @@ activemq-data/
 
 # Environments
 .env
+.env.*
+!.env.example
+!.env.sample
+!.env.template
 .envrc
 .venv
 env/
@@ -215,6 +219,29 @@ tempCodeRunnerFile.py
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Local datasets, verification output, and execution notes
+/data/
+/.artifacts/
+/.superpowers/
+/.worktrees/
+
+# Local credentials and private key material
+/.aws/
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Local editor and operating-system artifacts
+.idea/
+.vscode/
+*.code-workspace
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+Desktop.ini
 
 # Streamlit
 .streamlit/secrets.toml
