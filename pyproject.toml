@@ -7,7 +7,9 @@ name = "finsight"
 version = "0.1.0"
 description = "A learning-first financial filing RAG project"
 requires-python = ">=3.12,<3.13"
-dependencies = []
+dependencies = [
+    "pypdf>=6.21.1,<7",
+]
 
 [dependency-groups]
 dev = ["pytest", "ruff", "jupyterlab", "ipykernel", "nbclient", "nbformat"]
