@@ -69,7 +69,17 @@ source, tests, notebook, lockfile and module documentation are the only intended
 
 ## Review and boundary
 
-Fresh whole-branch code review: pending final verification.
+Fresh whole-branch review covered commits `18b035f..153fee3`: no Critical, Important
+or actionable Minor findings. The reviewer independently ran 35 relevant tests, all
+passing, and exercised an actually damaged middle-page content stream in both modes.
+Both returned `text, error, text`, preserved indexes `0, 1, 2` and extracted the final page.
+
+The reviewer set upload isolation and PDF resource limits aside because this module
+provides local extraction. Ruling: retain that approved boundary until the application
+flow is implemented. Cost if that boundary is ignored: very large or untrusted PDFs can
+consume excessive memory in the local parser. No UI accepts external uploads yet.
+
+No deferred minor findings or additional implementation deviations were identified.
 
 No OCR, structured table recovery, chunking, retrieval, model calls, Pinecone resources
 or UI changes were introduced. No new network acquisition was needed for real-cache

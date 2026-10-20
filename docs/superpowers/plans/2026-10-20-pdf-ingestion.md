@@ -1,6 +1,6 @@
 # PDF Ingestion Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Extract any text PDF into source-addressable pages and inspect FinanceBench evidence locations.
 
@@ -34,11 +34,11 @@
 
 **Interfaces:** Produces `extract_pdf(path: Path, *, mode: Literal["plain", "layout"] = "plain") -> ParsedDocument`, immutable `ParsedDocument`/`ParsedPage`, and `ExtractionError`.
 
-- [ ] Add pypdf as the sole new runtime dependency and author valid synthetic PDFs at test runtime.
-- [ ] Write failing tests for ordered pages, blank/mixed text, financial numbers, source hash/parser version, plain/layout, missing/unreadable/malformed/encrypted input, invalid mode and page failure continuation. Add CLI JSON export and exit-code tests.
-- [ ] Run `uv run --frozen pytest tests/test_ingestion.py -q`. Expected: failures for missing extraction behavior.
-- [ ] Implement immutable records, extraction from one byte snapshot, page diagnostics and explicit JSON export CLI. Avoid benchmark imports in ingestion.
-- [ ] Repeat focused tests. Expected: all pass. Run full pytest before committing required Task 1 files.
+- [x] Add pypdf as the sole new runtime dependency and author valid synthetic PDFs at test runtime.
+- [x] Write failing tests for ordered pages, blank/mixed text, financial numbers, source hash/parser version, plain/layout, missing/unreadable/malformed/encrypted input, invalid mode and page failure continuation. Add CLI JSON export and exit-code tests.
+- [x] Run `uv run --frozen pytest tests/test_ingestion.py -q`. Expected: failures for missing extraction behavior.
+- [x] Implement immutable records, extraction from one byte snapshot, page diagnostics and explicit JSON export CLI. Avoid benchmark imports in ingestion.
+- [x] Repeat focused tests. Expected: all pass. Run full pytest before committing required Task 1 files.
 
 ### Task 2: FinanceBench evidence location audit
 
@@ -46,10 +46,10 @@
 
 **Interfaces:** Consumes `ParsedDocument` and `FinanceBenchDataset`. Produces `audit_evidence_locations(dataset: FinanceBenchDataset, parsed_by_doc: Mapping[str, ParsedDocument]) -> EvidenceLocationReport` with one result per annotation, plus `audit-evidence` command.
 
-- [ ] Write failing tests for all annotations, repeated locations, evidence-only documents, unresolved metadata/parsed source, source mismatch, missing PDF, invalid indexes and no-text/error pages. Cover CLI success, findings and extraction failure.
-- [ ] Run `uv run --frozen pytest tests/test_evidence_locations.py -q`. Expected: missing audit behavior fails.
-- [ ] Implement source identity, metadata and physical-page checks; expose counts/findings without similarity or correctness scores. CLI reads cached PDFs offline and prints JSON or human summaries.
-- [ ] Repeat focused tests, then full pytest. Expected: all pass. Commit Task 2 source/tests only.
+- [x] Write failing tests for all annotations, repeated locations, evidence-only documents, unresolved metadata/parsed source, source mismatch, missing PDF, invalid indexes and no-text/error pages. Cover CLI success, findings and extraction failure.
+- [x] Run `uv run --frozen pytest tests/test_evidence_locations.py -q`. Expected: missing audit behavior fails.
+- [x] Implement source identity, metadata and physical-page checks; expose counts/findings without similarity or correctness scores. CLI reads cached PDFs offline and prints JSON or human summaries.
+- [x] Repeat focused tests, then full pytest. Expected: all pass. Commit Task 2 source/tests only.
 
 ### Task 3: Learning notebook, real-data inspection and review
 
@@ -57,13 +57,13 @@
 
 **Interfaces:** Extend `execute_notebook(data_dir: Path, output: Path, *, notebook: Path = NOTEBOOK) -> NotebookNode`, preserving Module 1 defaults; CLI adds `--notebook`.
 
-- [ ] Add failing tests for notebook selection, synthetic extraction summary, empty committed outputs and Mermaid content. Run focused tests. Expected: optional notebook argument/notebook missing.
-- [ ] Create the notebook with roughly 150–250 explanatory words, bounded previews and a plain/layout financial-page experiment. Generalize the verifier without changing kernel lifecycle.
-- [ ] Run synthetic notebook tests and full pytest. Expected: all pass.
-- [ ] Parse both cached AMD filings; record page counts, statuses, timings and all nine evidence checks. Inspect narrative and financial statement text, documenting observed limitations.
-- [ ] Execute both notebooks offline against the warm cache. Run Ruff lint/format checks, build and inspect archives. Expected: no failures; data/artifacts absent from distributions.
-- [ ] Request one fresh read-only branch review under executing-plans. Resolve Important/Critical findings with RED–GREEN tests; record deferred minors and rulings.
-- [ ] Record actual validation results, verify the user's Module 1 notebook hash is unchanged, stage only required files and commit. Stop for module review.
+- [x] Add failing tests for notebook selection, synthetic extraction summary, empty committed outputs and Mermaid content. Run focused tests. Expected: optional notebook argument/notebook missing.
+- [x] Create the notebook with roughly 150–250 explanatory words, bounded previews and a plain/layout financial-page experiment. Generalize the verifier without changing kernel lifecycle.
+- [x] Run synthetic notebook tests and full pytest. Expected: all pass.
+- [x] Parse both cached AMD filings; record page counts, statuses, timings and all nine evidence checks. Inspect narrative and financial statement text, documenting observed limitations.
+- [x] Execute both notebooks offline against the warm cache. Run Ruff lint/format checks, build and inspect archives. Expected: no failures; data/artifacts absent from distributions.
+- [x] Request one fresh read-only branch review under executing-plans. Resolve Important/Critical findings with RED–GREEN tests; record deferred minors and rulings.
+- [x] Record actual validation results, verify the user's Module 1 notebook hash is unchanged, stage only required files and commit. Stop for module review.
 
 ## Execution notes
 
