@@ -30,10 +30,10 @@
 
 Deliver models for questions, evidence, document metadata, datasets, and audit results, plus company selection and reference resolution. Interfaces: `load_dataset(data_dir: Path, company: str = "AMD") -> FinanceBenchDataset` and `audit_dataset(dataset: FinanceBenchDataset) -> AuditReport`.
 
-- [ ] Write synthetic contract tests for actual source fields, optional annotations, malformed JSONL, negative pages, duplicate IDs, unknown companies, missing references, and selected/unselected metadata conflicts.
-- [ ] Run tests and observe failures before implementation.
-- [ ] Implement the minimum typed loader and audit, with project configuration folded into this task.
-- [ ] Run focused tests and lint; record actual results.
+- [x] Write synthetic contract tests for actual source fields, optional annotations, malformed JSONL, negative pages, duplicate IDs, unknown companies, missing references, and selected/unselected metadata conflicts.
+- [x] Run tests and observe failures before implementation.
+- [x] Implement the minimum typed loader and audit, with project configuration folded into this task.
+- [x] Run focused tests and lint; record actual results.
 
 Learning objective: distinguish questions, gold answers, evidence, and retrieval relevance.
 
@@ -41,10 +41,10 @@ Learning objective: distinguish questions, gold answers, evidence, and retrieval
 
 Deliver `fetch_dataset(data_dir: Path, company: str = "AMD") -> Path`, a provenance manifest, cache verification, and `fetch`/`audit` commands with `--company` and `--data-dir`. Fetch both JSONL files and only selected question/evidence PDFs. Record revision, source URLs, file hashes, question IDs, and document names. Cache corruption and failed/incomplete downloads are explicit failures; auditing is offline.
 
-- [ ] Write acquisition and command tests with controlled transport responses.
-- [ ] Observe failures, then implement acquisition and commands.
-- [ ] Test cache reuse, hash mismatches, interrupted downloads, unavailable files, and path safety.
-- [ ] Run the task tests and record actual results.
+- [x] Write acquisition and command tests with controlled transport responses.
+- [x] Observe failures, then implement acquisition and commands.
+- [x] Test cache reuse, hash mismatches, interrupted downloads, unavailable files, and path safety.
+- [x] Run the task tests and record actual results.
 
 Learning objective: source provenance, caching, and reproducibility.
 
@@ -52,11 +52,11 @@ Learning objective: source provenance, caching, and reproducibility.
 
 Deliver `notebooks/01_financebench_data_audit.ipynb`, setup instructions, an audit summary, and reproducible verification commands. Cover company coverage, AMD selection, evidence locations, optional annotations, audit findings, another-company exploration, and limitations. Explain concepts and meaningful trade-offs without narrating every Python statement.
 
-- [ ] Write an offline notebook execution test using synthetic fixtures.
-- [ ] Observe failure, then create the notebook using package functions.
-- [ ] Fetch the real corpus and verify eight questions, two filings, nine evidence annotations, eight unique document-page locations, and two missing reasoning labels.
-- [ ] Execute the real notebook against the warm cache; run pytest, Ruff, and package build.
-- [ ] Obtain a final code review, address material findings with regression tests, and report results and limitations.
+- [x] Write an offline notebook execution test using synthetic fixtures.
+- [x] Observe failure, then create the notebook using package functions.
+- [x] Fetch the real corpus and verify eight questions, two filings, nine evidence annotations, eight unique document-page locations, and two missing reasoning labels.
+- [x] Execute the real notebook against the warm cache; run pytest, Ruff, and package build.
+- [x] Obtain a final code review, address material findings with regression tests, and report results and limitations.
 
 Learning objective: assess benchmark coverage and the validity of evaluation claims.
 
