@@ -1,4 +1,4 @@
-"""Execute the Module 1 notebook with a local kernel and outbound networking blocked."""
+"""Execute a learning notebook with a local kernel and outbound networking blocked."""
 
 import argparse
 import json
@@ -32,9 +32,12 @@ urllib.request.urlopen = _no_http
 """
 
 
-def execute_notebook(data_dir: Path, output: Path) -> NotebookNode:
+def execute_notebook(data_dir: Path, output: Path, *, notebook: Path = NOTEBOOK) -> NotebookNode:
     """Run the actual notebook against a warm cache, leaving the source output-free."""
     output = output.resolve()
+    source = notebook.resolve()
+    if output == source or (output.exists() and source.exists() and output.samefile(source)):
+        raise ValueError("Output must differ from the source notebook")
     output.parent.mkdir(parents=True, exist_ok=True)
     runtime = output.parent / "notebook-runtime"
     kernel_root = runtime / "kernels"
@@ -65,7 +68,7 @@ def execute_notebook(data_dir: Path, output: Path) -> NotebookNode:
         connection_file=str(runtime / "connection.json"),
         transport_encryption="auto",
     )
-    notebook = nbformat.read(NOTEBOOK, as_version=4)
+    notebook = nbformat.read(source, as_version=4)
     notebook.cells.insert(0, nbformat.v4.new_code_cell(OFFLINE_GUARD))
     env = os.environ.copy()
     env.update(
@@ -90,15 +93,17 @@ def execute_notebook(data_dir: Path, output: Path) -> NotebookNode:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--data-dir", type=Path, default=ROOT / "data/financebench")
+    parser.add_argument("--notebook", type=Path, default=NOTEBOOK)
     parser.add_argument(
         "--output",
         type=Path,
-        default=ROOT / ".artifacts/01_financebench_data_audit.executed.ipynb",
+        help="Executed copy (default: .artifacts/<notebook-stem>.executed.ipynb)",
     )
     args = parser.parse_args()
-    executed = execute_notebook(args.data_dir, args.output)
+    output = args.output or ROOT / f".artifacts/{args.notebook.stem}.executed.ipynb"
+    executed = execute_notebook(args.data_dir, output, notebook=args.notebook)
     count = sum(cell.cell_type == "code" for cell in executed.cells)
-    print(f"Executed {count} code cells offline. Output: {args.output.resolve()}")
+    print(f"Executed {count} code cells offline. Output: {output.resolve()}")
 
 
 if __name__ == "__main__":

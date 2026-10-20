@@ -4,9 +4,10 @@ A learning-first financial filing RAG project: build an inspectable Python basel
 evaluate it, then compare advanced retrieval approaches and a LangChain implementation.
 The eventual simple UI will accept one SEC filing PDF at a time from any company or year.
 
-**Current module:** FinanceBench data foundation. This module acquires and audits a
-benchmark corpus. PDF parsing, retrieval, generation, and the UI follow in separately
-reviewed modules. No model API keys or Pinecone resources are needed yet.
+**Current module:** PDF ingestion and source locations. The foundation acquires and
+audits FinanceBench; ingestion extracts local text PDFs from any company into physical
+pages. Retrieval, generation and the UI follow in separately reviewed modules.
+No model API keys or Pinecone resources are needed yet.
 
 ## Start here
 
@@ -73,6 +74,54 @@ The executed copy is saved to `.artifacts/01_financebench_data_audit.executed.ip
 The verifier uses a project-local kernel specification and shuts down its kernel;
 it does not need a globally registered Jupyter kernel.
 
+## Module 2: Extract and inspect PDFs
+
+[02_pdf_ingestion.ipynb](notebooks/02_pdf_ingestion.ipynb) covers page provenance,
+plain versus layout extraction, pages without text and evidence alignment. It includes
+a Mermaid diagram, bounded text previews and a financial-page comparison. Change
+`COMPANY` after fetching that company's filings; extraction itself accepts any local PDF.
+
+```powershell
+# Generic extraction; parsed text stays in an ignored local artifact.
+uv run python -m finsight.ingestion data/financebench/pdfs/AMD_2022_10K.pdf --output .artifacts/pdf-ingestion/amd-pages.json
+
+# Offline evidence-location checks, including source identity and page bounds.
+uv run python -m finsight.financebench audit-evidence --company AMD
+
+# Execute Module 2 offline; Module 1 remains the verifier's default.
+uv run python scripts/verify_notebook.py --notebook notebooks/02_pdf_ingestion.ipynb
+```
+
+The executed copy is `.artifacts/02_pdf_ingestion.executed.ipynb`. Notebook source
+files are output-free in Git. Mermaid rendering depends on the notebook viewer;
+the diagram's fenced source remains readable when rendering is unavailable.
+
+`extract_pdf(path: Path, *, mode="plain") -> ParsedDocument` records the source filename,
+SHA-256, pypdf version, mode, ordered pages and diagnostics. A zero-based physical index
+becomes viewer position `index + 1`; printed page labels may differ. Empty and failed
+pages retain their positions. The generic extractor never receives benchmark annotations.
+Use `--mode layout` to compare spacing; neither mode reconstructs structured tables.
+
+`audit_evidence_locations(dataset, parsed_by_doc) -> EvidenceLocationReport` accounts
+for every annotation, checks metadata resolution and source identity, and tests bounds
+and text presence. `source_verified` means the parsed snapshot matches the current
+cached PDF; `provenance_verified` separately describes the pinned manifest checks.
+An absent manifest remains an explicit warning. Pages without text produce warnings;
+out-of-range references, failed evidence pages and source mismatches are errors.
+Text presence does not establish correct reading order, financial values or answers.
+
+Extraction prints a small JSON summary, optionally exporting full parsed text with
+`--output`. It returns `0` for completed extraction, `1` for retained page errors,
+and `2` for document/input/output failures. Missing, unreadable, malformed and encrypted
+PDFs raise `ExtractionError`; passwords and OCR are outside this module. Evidence audit
+uses the same exit conventions as the annotation audit and accepts `--json`.
+
+The inspected AMD cache contains 215 physical pages in the 2015 filing and 121 in the
+2022 filing. Both plain extractions had zero no-text or error pages. All nine evidence
+annotations cover eight valid document-page locations with text. These checks describe
+this cache, not extraction quality across arbitrary uploads. See the
+[Module 2 review](docs/superpowers/reviews/2026-10-20-pdf-ingestion-review.md) for observations.
+
 ## How Module 1 works
 
 `src/finsight/financebench` separates typed records, source loading, auditing,
@@ -126,11 +175,12 @@ uv run pytest
 uv run ruff check .
 uv run ruff format --check .
 uv run python scripts/verify_notebook.py
+uv run python scripts/verify_notebook.py --notebook notebooks/02_pdf_ingestion.ipynb
 uv build
 ```
 
-Tests use authored synthetic records and controlled HTTP responses. The notebook test
-executes the actual notebook against those fixtures with outbound networking blocked.
+Tests use authored synthetic records, runtime-generated valid PDFs and controlled HTTP
+responses. Both notebook tests execute actual notebooks with outbound networking blocked.
 Real-data preparation and notebook execution are separate acceptance checks.
 Pytest temporary data stays under `.artifacts/pytest`.
 
@@ -142,9 +192,11 @@ uv run python -m finsight.financebench audit --json > .artifacts/amd-audit.json
 
 ## Limitations and review boundary
 
-- This module checks annotations and acquisition. It does not parse PDFs, check page
-  bounds, inspect table extraction, or verify that evidence matches downloaded page text.
-  PDF signature checks during acquisition are not full structural validation.
+- Text extraction and evidence bounds checks do not establish that an annotation matches
+  parsed text. Visual tables, merged headers, multi-column order and scanned/image pages
+  need further work. No text alone does not establish that a page is scanned.
+- PDFs are parsed locally in memory for this learning baseline. Resource limits and
+  upload isolation belong to the later application flow, before accepting external uploads.
 - The eight inspected AMD questions are development cases, not an unseen evaluation set.
   More independently reviewed cases are needed to assess arbitrary uploads.
 - Gold evidence identifies known support; it is not an exhaustive relevance set.
@@ -157,6 +209,8 @@ uv run python -m finsight.financebench audit --json > .artifacts/amd-audit.json
 - Acquisition is a local, single-process development workflow; concurrent writers to
   the same cache are not supported.
 
-Review Module 1 before proceeding to PDF parsing in Module 2.
-See the [approved design](docs/superpowers/specs/2026-10-20-financebench-foundation-design.md)
-and [implementation plan](docs/superpowers/plans/2026-10-20-financebench-foundation.md).
+Review Module 2 before proceeding to chunking. See the
+[Module 2 design](docs/superpowers/specs/2026-10-20-pdf-ingestion-design.md) and
+[implementation plan](docs/superpowers/plans/2026-10-20-pdf-ingestion.md).
+The [Module 1 design](docs/superpowers/specs/2026-10-20-financebench-foundation-design.md)
+and [plan](docs/superpowers/plans/2026-10-20-financebench-foundation.md) remain available.
