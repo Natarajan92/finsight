@@ -35,7 +35,11 @@ def write_pdf(path: Path, texts: list[str | None], *, encrypted: bool = False) -
 def add_valid_pdfs(data_dir: Path) -> Path:
     write_pdf(
         data_dir / "pdfs/AMD_2022_10K.pdf",
-        ["Revenue: $12 million. Operating loss: (1,234).", None, "Cash flow: 7.5%."],
+        [
+            "Revenue: $12 million. Operating loss: (1,234). Cash flows discussed in narrative.",
+            None,
+            "Consolidated Statements of Cash Flows. Cash flow: 7.5%.",
+        ],
     )
     write_pdf(data_dir / "pdfs/OTHER_2023_10K.pdf", ["Other company revenue: $42."])
     return data_dir
